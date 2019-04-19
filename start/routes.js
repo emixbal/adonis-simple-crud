@@ -20,7 +20,12 @@ Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
 
-// Route.get('/categories','CategoryController.getCategories');
-Route.get('categories','CategoryController.getCategories');
-Route.post('categories','CategoryController.createCategories');
-Route.delete('categories/:id','CategoryController.deleteCategories');
+Route.group(function(){
+  Route.get('/', 'PostController.index')
+  Route.get('/view/:id', 'PostController.withView')
+  Route.post('/', 'PostController.create')
+  Route.get('/:id', 'PostController.show')
+  Route.patch('/:id', 'PostController.update')
+  Route.delete('/:id', 'PostController.destroy')
+  // Route.get('/:id', 'PostController.index')
+}).prefix('posts')

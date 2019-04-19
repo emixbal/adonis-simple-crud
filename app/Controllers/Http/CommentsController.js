@@ -1,13 +1,13 @@
 'use strict'
-const Post = use('App/Models/Post');
+const Comment = use('App/Models/Comment');
 const Database = use('Database')
 
-class PostController {
+class CommentController {
   async index ({ request, response, view }) {
     try {
       const {page, limit} =  await request.get()
-      const posts =  await Database.from('posts').paginate(1, 10)
-      return response.status(200).send(posts)
+      const comments =  await Database.from('comments').paginate(1, 10)
+      return response.status(200).send(comments)
     } catch (e) {
       console.log(e);
       return response.status(400).send({'message':'Something went wrong!'})
@@ -17,26 +17,24 @@ class PostController {
 
   async create ({ request, response, view }) {
     try {
-        const data = request.only(['name', 'description'])
-        const post = await Post.create(data)
-        return response.status(201).send(post)
+        const data = request.only(['title', 'content'])
+        const comment = await Comment.create(data)
+        return response.status(201).send(comment)
     } catch (e) {
       return response.status(400).send({'message':'Something went wrong!'})
     }
   }
 
-
-
   async show ({ params, request, response, view }) {
     try {
       const { id } = params
 
-      const post = await Post.find(id)
+      const comment = await Comment.find(id)
 
-      if(post==null)
+      if(comment==null)
         return response.status(404).send({'message':'No record found!'})
 
-      return response.status(200).send(post)
+      return response.status(200).send(comment)
 
     } catch (e) {
       return response.status(400).send({'message':'Something went wrong!'})
@@ -49,18 +47,19 @@ class PostController {
       const { id } = params
       const data = request.all()
 
-      const post = await Post.find(id)
+      const comment = await Comment.find(id)
 
-      if(post==null)
+      if(comment==null)
         return response.status(404).send({'message':'No record found!'})
 
-      post.merge(data)
-      await post.save()
-      await console.log('================= update success ==============');
+      comment.merge(data)
+      await comment.save()
+      console.log('===================== Update Success ===================');
 
-      return response.status(200).send(post)
+      return response.status(200).send(comment)
 
     } catch (e) {
+      console.log(e);
       return response.status(400).send({'message':'Something went wrong!'})
     }
   }
@@ -69,12 +68,12 @@ class PostController {
     try {
       const { id } = params
 
-      const post = await Post.find(id)
+      const comment = await Comment.find(id)
 
-      if(post==null)
+      if(comment==null)
         return response.status(404).send({'message':'No record found!'})
 
-      await post.delete()
+      await comment.delete()
 
       return response.status(200).send({'message':'Data deleted'})
 
@@ -82,11 +81,6 @@ class PostController {
       return response.status(400).send({'message':'Something went wrong!'})
     }
   }
-  async withView({params, request, response, view}){
-    return view.render('post', {
-      package:params.id
-    })
-  }
 }
 
-module.exports = PostController
+module.exports = CommentController
